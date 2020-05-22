@@ -31,7 +31,7 @@ function operate(a, b, operator) {
     }
 }
 
-function displayInputtedNumber(number) {
+function numberButtonClicked(number) {
     const display = document.querySelector(".display-text");
     if (operatorIDs.includes(lastButtonClicked)) {
         display.textContent = "";
@@ -44,7 +44,7 @@ function displayResult(result) {
     display.textContent = result;
 }
 
-function updateOperation(operator) {
+/* function updateOperation(operator) {
     const display = document.querySelector(".display-text");
     let number = display.textContent;
     if (operation.a === undefined) {
@@ -59,6 +59,40 @@ function updateOperation(operator) {
         operation.operator = operator;
         console.log(operation);
     }    
+} */
+
+function getInputtedNumber(operand) {
+    const display = document.querySelector(".display-text");
+    let number = display.textContent;
+    if (operand === "a") {
+        operation.a = number;
+    } else if (operand === "b") {
+        operation.b = number;
+    }
+}
+
+function operatorButtonClicked(operator) {
+    const display = document.querySelector(".display-text");
+    if (operation.a === undefined) {
+        getInputtedNumber("a");
+        console.log("a: " + operation.a);
+        operation.operator = operator;
+    } else if (operation.b === undefined) {
+        getInputtedNumber("b");
+        console.log("b: " + operation.b);
+        let result = operate(operation.a, operation.b, operation.operator);
+        displayResult(result);
+        operation.operator = operator;
+
+        // if operator other than equals pressed, store result in a for further
+        // evaluations
+        console.log("test");
+        operation.a = operator === "=" ? undefined : result;
+        operation.b = undefined;
+        console.log("a after: " + operation.a);
+        console.log("b after: " + operation.b);
+    } 
+    
 }
 
 function updateLastButtonClicked(id) { // for resetting display (if needed)
@@ -69,17 +103,17 @@ function updateLastButtonClicked(id) { // for resetting display (if needed)
 const numberButtons = document.querySelectorAll("#one, #two, #three, #four, #five, " +
                                                 "#six, #seven, #eight, #nine, #zero");
 numberButtons.forEach(button => {
-    button.addEventListener("click", () => {
-        displayInputtedNumber(button.textContent);
-        updateLastButtonClicked(button.id);
+    button.addEventListener("click", () => {        
+        numberButtonClicked(button.textContent);     
+        updateLastButtonClicked(button.id);   
     });
 });
 
 const operatorButtons = document.querySelectorAll("#divide, #multiply, #subtract, #add");
 operatorButtons.forEach(button => {
     button.addEventListener("click", () => {
-        updateOperation(button.textContent);
         updateLastButtonClicked(button.id);
+        operatorButtonClicked(button.textContent);        
     })
 })
 
