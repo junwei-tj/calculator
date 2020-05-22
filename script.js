@@ -11,6 +11,9 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
+    if (b == 0) {
+        return "ERROR: DIVISION BY ZERO";
+    }
     return a / b;
 }
 
@@ -22,7 +25,7 @@ function operate(a, b, operator) {
             return add(a, b);
         case "-":
             return subtract(a, b);
-        case "*":
+        case "X":
             return multiply(a, b);
         case "/":
             return divide(a, b);
@@ -44,23 +47,6 @@ function displayResult(result) {
     display.textContent = result;
 }
 
-/* function updateOperation(operator) {
-    const display = document.querySelector(".display-text");
-    let number = display.textContent;
-    if (operation.a === undefined) {
-        operation.a = number;
-        operation.operator = operator;
-    } else if (operation.b === undefined) {
-        operation.b = number;
-        let result = operate(operation.a, operation.b, operation.operator);
-        displayResult(result);
-        operation.a = operator === "=" ? undefined : result;
-        operation.b = undefined;
-        operation.operator = operator;
-        console.log(operation);
-    }    
-} */
-
 function getInputtedNumber(operand) {
     const display = document.querySelector(".display-text");
     let number = display.textContent;
@@ -71,35 +57,43 @@ function getInputtedNumber(operand) {
     }
 }
 
+// evaluates and displays all intermediary results (if there is)
 function operatorButtonClicked(operator) {
     const display = document.querySelector(".display-text");
+    console.log(operation);
     if (operation.a === undefined) {
         getInputtedNumber("a");
-        console.log("a: " + operation.a);
         operation.operator = operator;
     } else if (operation.b === undefined) {
         getInputtedNumber("b");
-        console.log("b: " + operation.b);
         let result = operate(operation.a, operation.b, operation.operator);
         displayResult(result);
         operation.operator = operator;
 
         // if operator other than equals pressed, store result in a for further
         // evaluations
-        console.log("test");
         operation.a = operator === "=" ? undefined : result;
         operation.b = undefined;
         console.log("a after: " + operation.a);
         console.log("b after: " + operation.b);
-    } 
-    
+    }     
 }
 
 function updateLastButtonClicked(id) { // for resetting display (if needed)
     lastButtonClicked = id;
 }
 
-// add eventlistener to number buttons
+function clear() {
+    const display = document.querySelector(".display-text");
+    display.textContent = "";
+    operation = {
+        a: undefined,
+        b: undefined,
+        operator: undefined,
+    }
+}
+
+// update screen when number is pressed
 const numberButtons = document.querySelectorAll("#one, #two, #three, #four, #five, " +
                                                 "#six, #seven, #eight, #nine, #zero");
 numberButtons.forEach(button => {
@@ -109,7 +103,9 @@ numberButtons.forEach(button => {
     });
 });
 
-const operatorButtons = document.querySelectorAll("#divide, #multiply, #subtract, #add");
+// evaluate operation
+const operatorButtons = document.querySelectorAll("#divide, #multiply, #subtract, " +
+                                                    "#add, #equals");
 operatorButtons.forEach(button => {
     button.addEventListener("click", () => {
         updateLastButtonClicked(button.id);
@@ -117,6 +113,10 @@ operatorButtons.forEach(button => {
     })
 })
 
+const clearButton = document.querySelector("#clear");
+clearButton.addEventListener("click", clear);
+
+// global variables
 let operation = {
     a: undefined,
     b: undefined,
@@ -125,4 +125,4 @@ let operation = {
 let lastButtonClicked = "";
 const numberIDs = ["one", "two", "three", "four", "five", "six", "seven",
                     "eight", "nine", "zero"];
-const operatorIDs = ["divide", "multiply", "subtract", "add"];
+const operatorIDs = ["divide", "multiply", "subtract", "add", "equals"];
